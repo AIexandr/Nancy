@@ -783,6 +783,8 @@ namespace Nancy.TinyIoc
     }
     #endregion
 
+    public class InjectAttribute : Attribute { }
+
     public sealed partial class TinyIoCContainer : IDisposable
     {
         #region Fake NETFX_CORE Classes
@@ -3689,12 +3691,16 @@ namespace Nancy.TinyIoc
 
             try
             {
+              object o = null;
 #if USE_OBJECT_CONSTRUCTOR
-                var constructionDelegate = CreateObjectConstructionDelegateWithCache(constructor);
-                return constructionDelegate.Invoke(args);
+              var constructionDelegate = CreateObjectConstructionDelegateWithCache(constructor);
+              o = constructionDelegate.Invoke(args);
 #else
-                return constructor.Invoke(args);
+                o = constructor.Invoke(args);
 #endif
+              BuildUpInternal(o, ResolveOptions.Default, true);
+
+              return o;
             }
             catch (Exception ex)
             {
@@ -3735,16 +3741,20 @@ namespace Nancy.TinyIoc
         }
 #endif
 
-        private void BuildUpInternal(object input, ResolveOptions resolveOptions)
+        private void BuildUpInternal(object input, ResolveOptions resolveOptions, bool attributedPropertiesOnly = false)
         {
 //#if NETFX_CORE
 //			var properties = from property in input.GetType().GetTypeInfo().DeclaredProperties
 //							 where (property.GetMethod != null) && (property.SetMethod != null) && !property.PropertyType.GetTypeInfo().IsValueType
 //							 select property;
 //#else
-            var properties = from property in input.GetType().GetProperties()
-                             where (property.GetGetMethod() != null) && (property.GetSetMethod() != null) && !property.PropertyType.IsValueType()
-                             select property;
+
+            var q = input.GetType().GetProperties().Where(property => (property.GetGetMethod() != null) && (property.GetSetMethod() != null) && !property.PropertyType.IsValueType());
+            if (attributedPropertiesOnly)
+            {
+              q = q.Where(x => x.GetCustomAttributes(typeof(InjectAttribute), true).Count() > 0);
+            }
+            var properties = q.ToList();
 //#endif
 
             foreach (var property in properties)
