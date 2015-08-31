@@ -783,6 +783,7 @@ namespace Nancy.TinyIoc
     }
     #endregion
 
+    [AttributeUsage(AttributeTargets.Property, Inherited = true)]
     public class InjectAttribute : Attribute { }
 
     public sealed partial class TinyIoCContainer : IDisposable
