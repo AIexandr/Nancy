@@ -97,7 +97,7 @@ namespace Nancy.TinyIoc
         {
             set
             {
-                _padlock.EnterWriteLock();
+                //_padlock.EnterWriteLock();
 
                 try
                 {
@@ -114,7 +114,7 @@ namespace Nancy.TinyIoc
                 }
                 finally
                 {
-                    _padlock.ExitWriteLock();
+                    //_padlock.ExitWriteLock();
                 }
             }
         }
@@ -134,27 +134,27 @@ namespace Nancy.TinyIoc
 
         public bool Remove(TKey key)
         {
-            _padlock.EnterWriteLock();
+            //_padlock.EnterWriteLock();
             try
             {
                 return _Dictionary.Remove(key);
             }
             finally
             {
-                _padlock.ExitWriteLock();
+                //_padlock.ExitWriteLock();
             }
         }
 
         public void Clear()
         {
-            _padlock.EnterWriteLock();
+            //_padlock.EnterWriteLock();
             try
             {
                 _Dictionary.Clear();
             }
             finally
             {
-                _padlock.ExitWriteLock();
+                //_padlock.ExitWriteLock();
             }
         }
 
@@ -178,7 +178,7 @@ namespace Nancy.TinyIoc
 
         public void Dispose()
         {
-            _padlock.EnterWriteLock();
+            //_padlock.EnterWriteLock();
 
             try
             {
@@ -193,7 +193,7 @@ namespace Nancy.TinyIoc
             }
             finally
             {
-                _padlock.ExitWriteLock();
+                //_padlock.ExitWriteLock();
             }
 
             GC.SuppressFinalize(this);
