@@ -459,7 +459,6 @@
       if (dynamicValue.value is TimeSpan)
       {
         return (TimeSpan)dynamicValue.value;
-      if (dynamicValue == null) return default(int);
       }
 
       return TimeSpan.Parse(dynamicValue.ToString());
